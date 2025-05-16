@@ -327,3 +327,59 @@ WHERE (p.codigo_fabricante, p.precio) IN (
 )
 ORDER BY f.nombre ASC;
 
+-- eje 1.1.7.1 basicos de comparacion
+-- eje01
+SELECT *
+FROM producto
+WHERE codigo_fabricante = (SELECT codigo FROM fabricante WHERE nombre = 'Lenovo');
+
+-- eje02
+SELECT *
+FROM producto
+WHERE precio = (SELECT MAX(precio) FROM producto WHERE codigo_fabricante = (
+SELECT codigo FROM fabricante WHERE nombre = 'Lenovo')
+);
+
+-- eje03
+SELECT nombre
+FROM producto WHERE precio = (SELECT MAX(precio) FROM producto WHERE codigo_fabricante = (
+SELECT codigo FROM fabricante WHERE nombre = 'Lenovo')) AND codigo_fabricante = (
+SELECT codigo FROM fabricante WHERE nombre = 'Lenovo');
+
+-- eje04
+SELECT nombre
+FROM producto WHERE precio = (SELECT min(precio) FROM producto WHERE codigo_fabricante = (
+SELECT codigo FROM fabricante WHERE nombre = 'Hewlett-Packard')) AND codigo_fabricante = (
+SELECT codigo FROM fabricante WHERE nombre = 'Hewlett-Packard');
+
+-- eje05
+SELECT *
+FROM producto
+WHERE precio >= (SELECT MAX(precio)FROM producto WHERE codigo_fabricante = (
+SELECT codigo FROM fabricante WHERE nombre = 'Lenovo')
+);
+
+-- eje06
+select * 
+from producto where precio >(select avg(precio) from producto where codigo_fabricante =(
+select codigo from fabricante where nombre = 'Asus')
+);
+
+-- 1.1.7.2 subcosultas all y any 
+-- eje07
+SELECT *
+FROM producto
+WHERE precio >= ALL (SELECT precio FROM producto);
+-- eje08
+SELECT *
+FROM producto
+WHERE precio <= ALL (SELECT precio FROM producto);
+-- eje09
+SELECT nombre
+FROM fabricante
+WHERE codigo = ANY (SELECT DISTINCT codigo_fabricante FROM producto);
+
+
+
+
+
