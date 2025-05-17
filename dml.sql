@@ -378,8 +378,81 @@ WHERE precio <= ALL (SELECT precio FROM producto);
 SELECT nombre
 FROM fabricante
 WHERE codigo = ANY (SELECT DISTINCT codigo_fabricante FROM producto);
+-- eje10
+SELECT nombre
+FROM Fabricante
+WHERE codigo <> ALL (SELECT codigo_fabricante FROM Producto);	
+-- sub consultas in y not 
+-- eje 11
+SELECT nombre
+FROM Fabricante
+WHERE codigo IN (SELECT codigo_fabricante FROM Producto);
+-- eje 12
+SELECT nombre
+FROM Fabricante
+WHERE codigo NOT IN (SELECT codigo_fabricante FROM Producto);
+-- 1-1-7-4exist y not exits 
+-- eje13
+SELECT nombre
+FROM Fabricante f
+WHERE EXISTS (
+    SELECT 1
+    FROM Producto p
+    WHERE f.codigo = p.codigo_fabricante
+);
+-- eje14 
+SELECT nombre
+FROM Fabricante f
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM Producto p
+    WHERE f.codigo = p.codigo_fabricante
+);
 
+-- 1.1.7.sub consultas
+-- eje15
+SELECT f.nombre AS nombre_fabricante, p.nombre AS nombre_producto, p.precio
+FROM Fabricante f
+JOIN Producto p ON f.codigo = p.codigo_fabricante
+WHERE p.precio = (
+    SELECT MAX(precio)
+    FROM Producto p2
+    WHERE f.codigo = p2.codigo_fabricante
+);
+-- eje16 
+SELECT p.nombre AS nombre_producto, p.precio, f.nombre AS nombre_fabricante
+FROM Producto p
+JOIN Fabricante f ON p.codigo_fabricante = f.codigo
+WHERE p.precio >= (
+    SELECT AVG(precio)
+    FROM Producto p2
+    WHERE p.codigo_fabricante = p2.codigo_fabricante
+);
+-- eje 17
+SELECT p.nombre AS nombre_producto
+FROM Producto p
+JOIN Fabricante f ON p.codigo_fabricante = f.codigo
+WHERE f.nombre = 'Lenovo' AND p.precio = (
+    SELECT MAX(precio)
+    FROM Producto p2
+    WHERE p2.codigo_fabricante = f.codigo
+);
 
-
-
+-- eje18
+SELECT f.nombre AS nombre_fabricante
+FROM Fabricante f
+WHERE f.codigo IN (
+    SELECT p.codigo_fabricante
+    FROM Producto p
+    GROUP BY p.codigo_fabricante
+    HAVING COUNT(*) = (
+        SELECT COUNT(*)
+        FROM Producto p2
+        WHERE p2.codigo_fabricante = (
+            SELECT codigo
+            FROM Fabricante
+            WHERE nombre = 'Lenovo'
+        )
+    )
+);
 
